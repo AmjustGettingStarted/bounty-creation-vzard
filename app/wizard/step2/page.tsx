@@ -196,12 +196,18 @@ export default function Step2Page() {
                       step="0.01"
                       min="0.01"
                       placeholder="Enter amount"
-                      {...field}
+                      value={field.value === 0 || field.value === null || field.value === undefined ? "" : field.value}
                       onChange={(e) => {
-                        const value = e.target.value ? parseFloat(e.target.value) : 0;
-                        field.onChange(value);
+                        const raw = e.target.value;
+                        if (raw === "") {
+                          field.onChange("");
+                          return;
+                        }
+                        field.onChange(Number(raw));
                       }}
-                      value={field.value !== undefined ? field.value : ""}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
                     />
                   </FormControl>
                   <FormMessage />
@@ -220,12 +226,18 @@ export default function Step2Page() {
                       type="number"
                       min="1"
                       placeholder="Enter number of winners"
-                      {...field}
+                      value={field.value === 0 || field.value === null || field.value === undefined ? "" : field.value}
                       onChange={(e) => {
-                        const value = e.target.value ? parseInt(e.target.value, 10) : 1;
-                        field.onChange(value);
+                        const raw = e.target.value;
+                        if (raw === "") {
+                          field.onChange("");
+                          return;
+                        }
+                        field.onChange(Number(raw));
                       }}
-                      value={field.value !== undefined ? field.value : ""}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
                     />
                   </FormControl>
                   <FormMessage />
@@ -290,12 +302,18 @@ export default function Step2Page() {
                         type="number"
                         min="0"
                         placeholder="0"
-                        {...field}
+                        value={field.value === 0 || field.value === null || field.value === undefined ? "" : field.value}
                         onChange={(e) => {
-                          const value = e.target.value ? parseInt(e.target.value, 10) : 0;
-                          field.onChange(value);
+                          const raw = e.target.value;
+                          if (raw === "") {
+                            field.onChange("");
+                            return;
+                          }
+                          field.onChange(Number(raw));
                         }}
-                        value={field.value !== undefined ? field.value : ""}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />
@@ -315,12 +333,18 @@ export default function Step2Page() {
                         min="0"
                         max="23"
                         placeholder="0"
-                        {...field}
+                        value={field.value === 0 || field.value === null || field.value === undefined ? "" : field.value}
                         onChange={(e) => {
-                          const value = e.target.value ? parseInt(e.target.value, 10) : 0;
-                          field.onChange(value);
+                          const raw = e.target.value;
+                          if (raw === "") {
+                            field.onChange("");
+                            return;
+                          }
+                          field.onChange(Number(raw));
                         }}
-                        value={field.value !== undefined ? field.value : ""}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />
@@ -340,12 +364,18 @@ export default function Step2Page() {
                         min="0"
                         max="59"
                         placeholder="0"
-                        {...field}
+                        value={field.value === 0 || field.value === null || field.value === undefined ? "" : field.value}
                         onChange={(e) => {
-                          const value = e.target.value ? parseInt(e.target.value, 10) : 0;
-                          field.onChange(value);
+                          const raw = e.target.value;
+                          if (raw === "") {
+                            field.onChange("");
+                            return;
+                          }
+                          field.onChange(Number(raw));
                         }}
-                        value={field.value !== undefined ? field.value : ""}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
                       />
                     </FormControl>
                     <FormMessage />
