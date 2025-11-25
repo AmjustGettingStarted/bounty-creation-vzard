@@ -119,6 +119,10 @@ export default function Step2Page() {
     return () => subscription.unsubscribe();
   }, [form, setField]);
 
+  const handleBack = () => {
+    goToStep(1);
+  };
+
   const onSubmit = async (data: Step2FormData) => {
     // Update all fields in context
     if (data.reward) {
@@ -472,13 +476,24 @@ export default function Step2Page() {
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={form.formState.isSubmitting}
-            className="w-full"
-          >
-            Next
-          </Button>
+          {/* BUTTONS */}
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleBack}
+              className="flex-1"
+            >
+              Back
+            </Button>
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="flex-1"
+            >
+              Next
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
