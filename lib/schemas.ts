@@ -37,20 +37,24 @@ export const step2Schema = z.object({
     winners: z.number().int().min(1, "Winners must be at least 1"),
   }),
   timeline: z.object({
-    expiration_date: z.date({
-      required_error: "Expiration date is required",
-    }).refine(
-      (date) => date > new Date(),
-      {
-        message: "Expiration date must be in the future",
-      }
-    ),
+    expiration_date: z.date().optional(),
     estimated_completion: z.object({
       days: z.number().int().min(0, "Days must be 0 or greater"),
       hours: z.number().int().min(0, "Hours must be between 0 and 23").max(23, "Hours must be between 0 and 23"),
       minutes: z.number().int().min(0, "Minutes must be between 0 and 59").max(59, "Minutes must be between 0 and 59"),
     }),
-  }),
+  }).refine(
+    (data) => {
+      if (!data.expiration_date) {
+        return false;
+      }
+      return data.expiration_date > new Date();
+    },
+    {
+      message: "Expiration date is required and must be in the future",
+      path: ["expiration_date"],
+    }
+  ),
   hasImpactCertificate: z.boolean(),
   impactBriefMessage: z.string().optional(),
   sdgs: z.array(z.string()).min(1, "At least one SDG must be selected"),

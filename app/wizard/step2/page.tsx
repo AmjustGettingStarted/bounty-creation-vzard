@@ -50,9 +50,9 @@ export default function Step2Page() {
     resolver: zodResolver(step2Schema),
     defaultValues: {
       reward: {
-        currency: getNestedValue("reward.currency") || undefined,
-        amount: getNestedValue("reward.amount") || undefined,
-        winners: getNestedValue("reward.winners") || undefined,
+        currency: getNestedValue("reward.currency") ?? "",
+        amount: getNestedValue("reward.amount") ?? 0,
+        winners: getNestedValue("reward.winners") ?? 1,
       },
       timeline: {
         expiration_date: (() => {
@@ -67,9 +67,9 @@ export default function Step2Page() {
           minutes: getNestedValue("timeline.estimated_completion.minutes") ?? 0,
         },
       },
-      hasImpactCertificate: getNestedValue("hasImpactCertificate") || false,
-      impactBriefMessage: getNestedValue("impactBriefMessage") || "",
-      sdgs: getNestedValue("sdgs") || [],
+      hasImpactCertificate: getNestedValue("hasImpactCertificate") ?? false,
+      impactBriefMessage: getNestedValue("impactBriefMessage") ?? "",
+      sdgs: getNestedValue("sdgs") ?? [],
     },
   });
 
@@ -166,7 +166,7 @@ export default function Step2Page() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Currency</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select currency" />
@@ -198,10 +198,10 @@ export default function Step2Page() {
                       placeholder="Enter amount"
                       {...field}
                       onChange={(e) => {
-                        const value = e.target.value ? parseFloat(e.target.value) : undefined;
+                        const value = e.target.value ? parseFloat(e.target.value) : 0;
                         field.onChange(value);
                       }}
-                      value={field.value || ""}
+                      value={field.value !== undefined ? field.value : ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -222,10 +222,10 @@ export default function Step2Page() {
                       placeholder="Enter number of winners"
                       {...field}
                       onChange={(e) => {
-                        const value = e.target.value ? parseInt(e.target.value, 10) : undefined;
+                        const value = e.target.value ? parseInt(e.target.value, 10) : 1;
                         field.onChange(value);
                       }}
-                      value={field.value || ""}
+                      value={field.value !== undefined ? field.value : ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -295,7 +295,7 @@ export default function Step2Page() {
                           const value = e.target.value ? parseInt(e.target.value, 10) : 0;
                           field.onChange(value);
                         }}
-                        value={field.value || ""}
+                        value={field.value !== undefined ? field.value : ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -320,7 +320,7 @@ export default function Step2Page() {
                           const value = e.target.value ? parseInt(e.target.value, 10) : 0;
                           field.onChange(value);
                         }}
-                        value={field.value || ""}
+                        value={field.value !== undefined ? field.value : ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -345,7 +345,7 @@ export default function Step2Page() {
                           const value = e.target.value ? parseInt(e.target.value, 10) : 0;
                           field.onChange(value);
                         }}
-                        value={field.value || ""}
+                        value={field.value !== undefined ? field.value : ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -419,12 +419,13 @@ export default function Step2Page() {
                           >
                             <FormControl>
                               <Checkbox
-                                checked={field.value?.includes(sdg)}
+                                checked={field.value?.includes(sdg) || false}
                                 onCheckedChange={(checked) => {
+                                  const currentValue = field.value || [];
                                   return checked
-                                    ? field.onChange([...field.value, sdg])
+                                    ? field.onChange([...currentValue, sdg])
                                     : field.onChange(
-                                        field.value?.filter((value) => value !== sdg)
+                                        currentValue.filter((value) => value !== sdg)
                                       );
                                 }}
                               />

@@ -31,15 +31,13 @@ export default function Step3Page() {
   const form = useForm<Step3FormData>({
     resolver: zodResolver(step3Schema),
     defaultValues: {
-      has_backer: getNestedValue("has_backer") || false,
-      backer: getNestedValue("has_backer")
-        ? {
-            name: getNestedValue("backer.name") || "",
-            logo: getNestedValue("backer.logo") || "",
-            message: getNestedValue("backer.message") || "",
-          }
-        : undefined,
-      terms_accepted: getNestedValue("terms_accepted") || false,
+      has_backer: getNestedValue("has_backer") ?? false,
+      backer: {
+        name: getNestedValue("backer.name") ?? "",
+        logo: getNestedValue("backer.logo") ?? "",
+        message: getNestedValue("backer.message") ?? "",
+      },
+      terms_accepted: getNestedValue("terms_accepted") ?? false,
     },
   });
 
@@ -48,9 +46,15 @@ export default function Step3Page() {
   // Clear backer fields when has_backer is turned off
   useEffect(() => {
     if (!has_backer) {
-      form.setValue("backer", undefined);
-      // Remove backer from context
-      setField("backer", undefined);
+      form.setValue("backer", {
+        name: "",
+        logo: "",
+        message: "",
+      });
+      // Set backer to empty object in context
+      setField("backer.name", "");
+      setField("backer.logo", "");
+      setField("backer.message", "");
     }
   }, [has_backer, form, setField]);
 
@@ -60,18 +64,15 @@ export default function Step3Page() {
       if (value.has_backer !== undefined) {
         setField("has_backer", value.has_backer);
       }
-      if (value.has_backer && value.backer) {
-        if (value.backer.name !== undefined) {
-          setField("backer.name", value.backer.name);
-        }
-        if (value.backer.logo !== undefined) {
-          setField("backer.logo", value.backer.logo);
-        }
-        if (value.backer.message !== undefined) {
-          setField("backer.message", value.backer.message);
-        }
-      } else if (!value.has_backer) {
-        setField("backer", undefined);
+      if (value.backer) {
+        setField("backer.name", value.backer.name ?? "");
+        setField("backer.logo", value.backer.logo ?? "");
+        setField("backer.message", value.backer.message ?? "");
+      } else {
+        // Ensure backer object always exists in context
+        setField("backer.name", "");
+        setField("backer.logo", "");
+        setField("backer.message", "");
       }
       if (value.terms_accepted !== undefined) {
         setField("terms_accepted", value.terms_accepted);
@@ -83,13 +84,18 @@ export default function Step3Page() {
   const onSubmit = async (data: Step3FormData) => {
     // Update all fields in context
     setField("has_backer", data.has_backer);
-    if (data.has_backer && data.backer) {
-      setField("backer.name", data.backer.name || "");
-      setField("backer.logo", data.backer.logo || "");
-      setField("backer.message", data.backer.message || "");
+    
+    if (data.backer) {
+      setField("backer.name", data.backer.name ?? "");
+      setField("backer.logo", data.backer.logo ?? "");
+      setField("backer.message", data.backer.message ?? "");
     } else {
-      setField("backer", undefined);
+      // Ensure backer object always exists with empty strings
+      setField("backer.name", "");
+      setField("backer.logo", "");
+      setField("backer.message", "");
     }
+    
     setField("terms_accepted", data.terms_accepted);
 
     // Validate step 3
@@ -141,7 +147,11 @@ export default function Step3Page() {
                     <FormItem>
                       <FormLabel>Backer Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter backer name" {...field} />
+                        <Input 
+                          placeholder="Enter backer name" 
+                          {...field} 
+                          value={field.value ?? ""}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -159,6 +169,7 @@ export default function Step3Page() {
                           type="url"
                           placeholder="https://example.com/logo.png"
                           {...field}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -176,6 +187,7 @@ export default function Step3Page() {
                         <Textarea
                           placeholder="Enter backer message"
                           {...field}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />

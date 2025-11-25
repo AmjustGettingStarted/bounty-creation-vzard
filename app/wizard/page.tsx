@@ -24,12 +24,12 @@ export default function WizardPage() {
   const form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
     defaultValues: {
-      title: state.data.title || "",
-      description: state.data.description || "",
-      type: state.data.type || undefined,
-      dominant_core: state.data.dominant_core || undefined,
-      mode: state.data.mode || undefined,
-      location: state.data.location || "",
+      title: state.data.title ?? "",
+      description: state.data.description ?? "",
+      type: (state.data.type as "Content" | "Design" | "Development" | "Marketing" | "Other") || undefined,
+      dominant_core: (state.data.dominant_core as "Water" | "Earth" | "Social" | "Energy") || undefined,
+      mode: (state.data.mode as "digital" | "physical") || undefined,
+      location: state.data.location ?? "",
     },
   });
 
@@ -109,7 +109,7 @@ export default function WizardPage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value ?? ""}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
@@ -134,7 +134,7 @@ export default function WizardPage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Dominant Core</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value ?? ""}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select dominant core" />
@@ -161,7 +161,7 @@ export default function WizardPage() {
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
-                    value={field.value}
+                    value={field.value ?? ""}
                     className="flex flex-row space-x-4"
                   >
                     <div className="flex items-center space-x-2">
@@ -197,7 +197,6 @@ export default function WizardPage() {
 
           <Button
             type="submit"
-            variant={"ghost"}
             disabled={form.formState.isSubmitting}
             className="w-full"
           >
