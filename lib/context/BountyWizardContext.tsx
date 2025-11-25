@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Step1FormData } from "@/lib/schemas";
+import { Step1FormData, step2Schema } from "@/lib/schemas";
 import { step1Schema } from "@/lib/schemas";
 import { z } from "zod";
 
@@ -30,13 +30,32 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
   });
 
   const setField = useCallback((fieldName: string, value: any) => {
-    setState((prev) => ({
-      ...prev,
-      data: {
-        ...prev.data,
-        [fieldName]: value,
-      },
-    }));
+    setState((prev) => {
+      const newData = { ...prev.data };
+      
+      // Handle nested paths like "reward.amount"
+      if (fieldName.includes(".")) {
+        const keys = fieldName.split(".");
+        let current: any = newData;
+        
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i];
+          if (!current[key] || typeof current[key] !== "object") {
+            current[key] = {};
+          }
+          current = current[key];
+        }
+        
+        current[keys[keys.length - 1]] = value;
+      } else {
+        newData[fieldName] = value;
+      }
+      
+      return {
+        ...prev,
+        data: newData,
+      };
+    });
   }, []);
 
   const validateStep = useCallback((stepNumber: number): boolean => {
@@ -44,6 +63,9 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
       switch (stepNumber) {
         case 1:
           step1Schema.parse(state.data);
+          return true;
+        case 2:
+          step2Schema.parse(state.data);
           return true;
         default:
           return true;
