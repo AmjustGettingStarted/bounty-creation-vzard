@@ -33,7 +33,7 @@ const SDG_OPTIONS = [
 ];
 
 export default function Step2Page() {
-  const { state, setField, validateStep, goToStep } = useBountyWizard();
+  const { state, setField, validateStep, goToStep, markStepCompleted } = useBountyWizard();
 
   // Helper to get nested value from state.data
   const getNestedValue = (path: string) => {
@@ -145,6 +145,7 @@ export default function Step2Page() {
     // Validate step 2
     const result = await validateStep(2);
     if (result.valid) {
+      markStepCompleted(2, true);
       goToStep(3);
     }
   };

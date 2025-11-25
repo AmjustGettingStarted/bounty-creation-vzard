@@ -10,6 +10,7 @@ interface WizardState {
   data: Partial<Step1FormData> & Record<string, any>;
   currentStep: number;
   completedSteps: Record<number, boolean>;
+  isSubmitting: boolean;
 }
 
 interface BountyWizardContextType {
@@ -18,6 +19,8 @@ interface BountyWizardContextType {
   validateStep: (stepNumber: number) => Promise<{ valid: boolean }>;
   goToStep: (stepNumber: number | "confirmation" | "result") => void;
   markStepCompleted: (stepNumber: number, completed: boolean) => void;
+  submit: () => Promise<Record<string, any>>;
+  resetWizard: () => void;
 }
 
 const BountyWizardContext = createContext<BountyWizardContextType | undefined>(
@@ -30,6 +33,7 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
     data: {},
     currentStep: 1,
     completedSteps: {},
+    isSubmitting: false,
   });
 
   const setField = useCallback((fieldName: string, value: any) => {
@@ -112,6 +116,36 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
     }
   }, [router]);
 
+  const submit = useCallback(async (): Promise<Record<string, any>> => {
+    setState((prev) => ({ ...prev, isSubmitting: true }));
+    
+    try {
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      
+      // Here you would typically send the data to an API
+      // In a real app, you would do: await fetch('/api/bounties', { method: 'POST', body: JSON.stringify(state.data) })
+      
+      setState((prev) => ({ ...prev, isSubmitting: false }));
+      
+      return state.data;
+    } catch (error) {
+      console.error("Submission error:", error);
+      setState((prev) => ({ ...prev, isSubmitting: false }));
+      throw error;
+    }
+  }, [state.data]);
+
+  const resetWizard = useCallback(() => {
+    setState({
+      data: {},
+      currentStep: 1,
+      completedSteps: {},
+      isSubmitting: false,
+    });
+    router.push("/wizard");
+  }, [router]);
+
   return (
     <BountyWizardContext.Provider
       value={{
@@ -120,6 +154,8 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
         validateStep,
         goToStep,
         markStepCompleted,
+        submit,
+        resetWizard,
       }}
     >
       {children}

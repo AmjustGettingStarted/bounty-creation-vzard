@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
 export default function WizardPage() {
-  const { state, setField, validateStep, goToStep } = useBountyWizard();
+  const { state, setField, validateStep, goToStep, markStepCompleted } = useBountyWizard();
 
   const form = useForm<Step1FormData>({
     resolver: zodResolver(step1Schema),
@@ -64,6 +64,7 @@ export default function WizardPage() {
     // Validate step 1
     const result = await validateStep(1);
     if (result.valid) {
+      markStepCompleted(1, true);
       goToStep(2);
     }
   };

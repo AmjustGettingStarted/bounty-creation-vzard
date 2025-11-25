@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Step3Page() {
-  const { state, setField, validateStep, goToStep } = useBountyWizard();
+  const { state, setField, validateStep, goToStep, markStepCompleted } = useBountyWizard();
   const router = useRouter();
 
   // Helper to get nested value from state.data
@@ -95,6 +95,7 @@ export default function Step3Page() {
     // Validate step 3
     const result = await validateStep(3);
     if (result.valid) {
+      markStepCompleted(3, true);
       router.push("/wizard/confirmation");
     }
   };
