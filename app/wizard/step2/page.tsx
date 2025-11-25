@@ -151,7 +151,7 @@ export default function Step2Page() {
   };
 
   return (
-    <div className="max-w-3xl space-y-8">
+    <div className="max-w-2xl w-full mx-auto space-y-8">
       <h1 className="text-3xl font-bold mb-6">Step 2: Rewards</h1>
 
       <Form {...form}>
