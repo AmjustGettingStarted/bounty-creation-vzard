@@ -69,7 +69,7 @@ export default function ResultPage() {
   }
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-2xl w-full mx-auto space-y-8">
       <h1 className="text-3xl font-bold mb-6">Bounty Created Successfully</h1>
 
       <Card>
