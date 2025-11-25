@@ -10,15 +10,14 @@ export default function WizardLayout({
   return (
     <BountyWizardProvider>
       <SidebarProvider>
+        <AppSidebar side="left" />
         <SidebarInset>
           <header className="flex h-16 items-center border-b px-4">
-            <SidebarTrigger className="ml-auto" />
+            <SidebarTrigger />
           </header>
 
           <main className="p-6">{children}</main>
         </SidebarInset>
-
-        <AppSidebar side="right" />
       </SidebarProvider>
     </BountyWizardProvider>
   );
