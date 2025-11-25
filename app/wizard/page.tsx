@@ -55,14 +55,15 @@ export default function WizardPage() {
     return () => subscription.unsubscribe();
   }, [form, setField]);
 
-  const onSubmit = (data: Step1FormData) => {
+  const onSubmit = async (data: Step1FormData) => {
     // Update all fields in context
     Object.entries(data).forEach(([key, value]) => {
       setField(key, value);
     });
 
     // Validate step 1
-    if (validateStep(1)) {
+    const result = await validateStep(1);
+    if (result.valid) {
       goToStep(2);
     }
   };
@@ -197,7 +198,7 @@ export default function WizardPage() {
             type="submit"
             variant={"ghost"}
             disabled={form.formState.isSubmitting}
-            className=""
+            className="w-full"
           >
             Next
           </Button>

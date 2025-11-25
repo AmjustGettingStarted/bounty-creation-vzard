@@ -69,3 +69,64 @@ export const step2Schema = z.object({
 
 export type Step2FormData = z.infer<typeof step2Schema>;
 
+export const step3Schema = z.object({
+  has_backer: z.boolean(),
+  backer: z.object({
+    name: z.string().optional(),
+    logo: z.string().optional(),
+    message: z.string().optional(),
+  }).optional(),
+  terms_accepted: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions",
+  }),
+}).refine(
+  (data) => {
+    if (data.has_backer) {
+      return data.backer?.name && data.backer.name.trim().length > 0;
+    }
+    return true;
+  },
+  {
+    message: "Backer name is required when backer is enabled",
+    path: ["backer", "name"],
+  }
+).refine(
+  (data) => {
+    if (data.has_backer) {
+      return data.backer?.logo && data.backer.logo.trim().length > 0;
+    }
+    return true;
+  },
+  {
+    message: "Backer logo URL is required when backer is enabled",
+    path: ["backer", "logo"],
+  }
+).refine(
+  (data) => {
+    if (data.has_backer && data.backer?.logo) {
+      try {
+        new URL(data.backer.logo);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return true;
+  },
+  {
+    message: "Logo must be a valid URL",
+    path: ["backer", "logo"],
+  }
+).transform((data) => {
+  // If has_backer is false, set backer to undefined
+  if (!data.has_backer) {
+    return {
+      ...data,
+      backer: undefined,
+    };
+  }
+  return data;
+});
+
+export type Step3FormData = z.infer<typeof step3Schema>;
+

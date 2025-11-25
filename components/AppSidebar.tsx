@@ -20,8 +20,8 @@ interface Step {
 
 const steps: Step[] = [
   { id: 1, name: "Basics", route: "/wizard" },
-  { id: 2, name: "Rewards", route: "/wizard/confirmation" },
-  { id: 3, name: "Backer", route: "/wizard/result" },
+  { id: 2, name: "Rewards", route: "/wizard/step2" },
+  { id: 3, name: "Backer", route: "/wizard/step3" },
 ];
 
 export function AppSidebar({ side }: { side: "left" | "right" }) {

@@ -2,20 +2,22 @@
 
 import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Step1FormData, step2Schema } from "@/lib/schemas";
+import { Step1FormData, step2Schema, step3Schema } from "@/lib/schemas";
 import { step1Schema } from "@/lib/schemas";
 import { z } from "zod";
 
 interface WizardState {
   data: Partial<Step1FormData> & Record<string, any>;
   currentStep: number;
+  completedSteps: Record<number, boolean>;
 }
 
 interface BountyWizardContextType {
   state: WizardState;
   setField: (fieldName: string, value: any) => void;
-  validateStep: (stepNumber: number) => boolean;
-  goToStep: (stepNumber: number) => void;
+  validateStep: (stepNumber: number) => Promise<{ valid: boolean }>;
+  goToStep: (stepNumber: number | "confirmation" | "result") => void;
+  markStepCompleted: (stepNumber: number, completed: boolean) => void;
 }
 
 const BountyWizardContext = createContext<BountyWizardContextType | undefined>(
@@ -27,6 +29,7 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<WizardState>({
     data: {},
     currentStep: 1,
+    completedSteps: {},
   });
 
   const setField = useCallback((fieldName: string, value: any) => {
@@ -58,36 +61,53 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const validateStep = useCallback((stepNumber: number): boolean => {
+  const validateStep = useCallback(async (stepNumber: number): Promise<{ valid: boolean }> => {
     try {
       switch (stepNumber) {
         case 1:
           step1Schema.parse(state.data);
-          return true;
+          return { valid: true };
         case 2:
           step2Schema.parse(state.data);
-          return true;
+          return { valid: true };
+        case 3:
+          step3Schema.parse(state.data);
+          return { valid: true };
         default:
-          return true;
+          return { valid: true };
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
         console.error("Validation error:", error.errors);
       }
-      return false;
+      return { valid: false };
     }
   }, [state.data]);
 
-  const goToStep = useCallback((stepNumber: number) => {
-    const routes: Record<number, string> = {
+  const markStepCompleted = useCallback((stepNumber: number, completed: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      completedSteps: {
+        ...prev.completedSteps,
+        [stepNumber]: completed,
+      },
+    }));
+  }, []);
+
+  const goToStep = useCallback((stepNumber: number | "confirmation" | "result") => {
+    const routes: Record<number | string, string> = {
       1: "/wizard",
-      2: "/wizard/confirmation",
-      3: "/wizard/result",
+      2: "/wizard/step2",
+      3: "/wizard/step3",
+      confirmation: "/wizard/confirmation",
+      result: "/wizard/result",
     };
     
     const route = routes[stepNumber];
     if (route) {
-      setState((prev) => ({ ...prev, currentStep: stepNumber }));
+      if (typeof stepNumber === "number") {
+        setState((prev) => ({ ...prev, currentStep: stepNumber }));
+      }
       router.push(route);
     }
   }, [router]);
@@ -99,6 +119,7 @@ export function BountyWizardProvider({ children }: { children: ReactNode }) {
         setField,
         validateStep,
         goToStep,
+        markStepCompleted,
       }}
     >
       {children}
