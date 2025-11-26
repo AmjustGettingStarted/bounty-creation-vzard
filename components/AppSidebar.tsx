@@ -44,8 +44,8 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
   };
 
   return (
-    <Sidebar side={side}>
-      <SidebarContent>
+    <Sidebar side={side} className="bg-white border-r border-gray-200">
+      <SidebarContent className="bg-white">
         <SidebarGroup>
           <SidebarGroupLabel>Steps</SidebarGroupLabel>
           <SidebarGroupContent>
