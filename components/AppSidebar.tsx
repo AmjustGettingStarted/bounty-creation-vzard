@@ -44,15 +44,11 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
   };
 
   return (
-    <Sidebar
-      side={side}
-      className=" bg-sidebar text-sidebar-foreground border-r border-sidebar-border data-[state=open]:bg-black
-    "
-    >
-      <SidebarContent className="bg-sidebar text-sidebar-foreground data-[state=open]:bg-black">
+    <Sidebar side={side}>
+      <SidebarContent className="bg-white dark:bg-background">
         <SidebarGroup>
           <SidebarGroupLabel>Steps</SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupContent >
             <SidebarMenu>
               {steps.map((step) => {
                 const completed = isStepCompleted(step.id);
@@ -67,7 +63,7 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
                       isActive={active}
                       tooltip={disabled ? "Complete previous steps first" : step.name}
                     >
-                      <span>Step {step.id}</span>
+                      <span>Step {step.id} : </span>
                       <span>{step.name}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -78,7 +74,6 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-
   );
 }
 
