@@ -44,8 +44,12 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
   };
 
   return (
-    <Sidebar side={side} className="bg-white border-r border-gray-200">
-      <SidebarContent className="bg-white">
+    <Sidebar
+      side={side}
+      className=" bg-sidebar text-sidebar-foreground border-r border-sidebar-border data-[state=open]:bg-black
+    "
+    >
+      <SidebarContent className="bg-sidebar text-sidebar-foreground data-[state=open]:bg-black">
         <SidebarGroup>
           <SidebarGroupLabel>Steps</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -74,6 +78,7 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
+
   );
 }
 
