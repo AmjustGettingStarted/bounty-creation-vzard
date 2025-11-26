@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 interface Step {
   id: number;
@@ -28,17 +29,24 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Determine current step based on route
-  const currentStep = steps.find((step) => step.route === pathname)?.id || 1;
+  // Find the matching step - returns null if pathname doesn't match any step route
+  const matchingStep = steps.find((step) => step.route === pathname);
+  const currentStepId = matchingStep?.id ?? null;
 
-  // A step is completed if it's before the current step
-  const isStepCompleted = (stepId: number) => stepId < currentStep;
-  const isStepActive = (stepId: number) => stepId === currentStep;
-  const isStepDisabled = (stepId: number) => stepId > currentStep;
+  // A step is completed if it's before the current step (only if we have a valid current step)
+  const isStepCompleted = (stepId: number) => {
+    if (currentStepId === null) return false;
+    return stepId < currentStepId;
+  };
+
+  const isStepDisabled = (stepId: number) => {
+    if (currentStepId === null) return false;
+    return stepId > currentStepId;
+  };
 
   const goToStep = (stepNumber: number) => {
     const step = steps.find((s) => s.id === stepNumber);
-    if (step && (isStepCompleted(stepNumber) || isStepActive(stepNumber))) {
+    if (step && !isStepDisabled(stepNumber)) {
       router.push(step.route);
     }
   };
@@ -51,17 +59,21 @@ export function AppSidebar({ side }: { side: "left" | "right" }) {
           <SidebarGroupContent >
             <SidebarMenu>
               {steps.map((step) => {
-                const completed = isStepCompleted(step.id);
-                const active = isStepActive(step.id);
                 const disabled = isStepDisabled(step.id);
+
+                // Only highlight if pathname exactly matches this step's route
+                const isVisibleActive = pathname === step.route;
 
                 return (
                   <SidebarMenuItem key={step.id}>
                     <SidebarMenuButton
                       onClick={() => goToStep(step.id)}
                       disabled={disabled}
-                      isActive={active}
+                      isActive={isVisibleActive}
                       tooltip={disabled ? "Complete previous steps first" : step.name}
+                      className={cn(
+                        isVisibleActive && "!bg-primary !text-primary-foreground hover:!bg-primary/90"
+                      )}
                     >
                       <span>Step {step.id} : </span>
                       <span>{step.name}</span>
